@@ -273,7 +273,7 @@ export const RoomService = {
         started_at: existingTask.started_at ?? now,
       })
       .eq("id", taskId)
-      .select("id, room_id")
+      .select("id, room_id, started_at")
       .single();
 
     if (error)
