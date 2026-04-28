@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { BookingService } from "@/app/services/booking.service";
-import { Booking, BookingWithMeta } from "@/types/booking.types";
+import { BookingWithMeta } from "@/types/booking.types";
 
 /* =========================================================
   RESERVATIONS HOOK (FINAL CLEAN VERSION)
