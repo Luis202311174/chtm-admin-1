@@ -263,7 +263,7 @@ export class BookingService {
 
       if (freshError || !freshBooking) {
         console.error("[FRESH BOOKING ERROR]", freshError);
-        return; // 🚨 THIS is why archive was not happening
+        return this.mapBooking(data); // fallback instead of null
       }
 
       await this.archiveBooking(freshBooking);

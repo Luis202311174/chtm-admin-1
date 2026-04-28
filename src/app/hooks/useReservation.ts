@@ -1,14 +1,14 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { BookingService } from "@/app/services/booking.service";
-import { Booking } from "@/types/booking.types";
+import { Booking, BookingWithMeta } from "@/types/booking.types";
 
 /* =========================================================
   RESERVATIONS HOOK (FINAL CLEAN VERSION)
 ========================================================= */
 
 export function useReservations() {
-  const [reservations, setReservations] = useState<Booking[]>([]);
+  const [reservations, setReservations] = useState<BookingWithMeta[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +73,7 @@ export function useReservations() {
   }, [fetchReservations]);
 
   /* =========================================================
-    REALTIME SYNC (STRICT + SAFE)
+    REALTIME SYNC (OPTION 1: SAFE REFRESH STRATEGY)
   ========================================================= */
   useEffect(() => {
     const channel = supabase
@@ -81,35 +81,28 @@ export function useReservations() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "bookings" },
-        (payload) => {
-          const newRow = payload.new as Booking;
-
-          setReservations((prev) => {
-            if (prev.some((b) => b.id === newRow.id)) return prev;
-            return [newRow, ...prev];
-          });
+        async () => {
+          const data = await BookingService.getAll();
+          if (!isMounted.current) return;
+          setReservations(data ?? []);
         }
       )
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "bookings" },
-        (payload) => {
-          const newRow = payload.new as Booking;
-
-          setReservations((prev) =>
-            prev.map((b) => (b.id === newRow.id ? { ...b, ...newRow } : b))
-          );
+        async () => {
+          const data = await BookingService.getAll();
+          if (!isMounted.current) return;
+          setReservations(data ?? []);
         }
       )
       .on(
         "postgres_changes",
         { event: "DELETE", schema: "public", table: "bookings" },
-        (payload) => {
-          const oldRow = payload.old as Booking;
-
-          setReservations((prev) =>
-            prev.filter((b) => b.id !== oldRow.id)
-          );
+        async () => {
+          const data = await BookingService.getAll();
+          if (!isMounted.current) return;
+          setReservations(data ?? []);
         }
       )
       .subscribe();
@@ -123,7 +116,7 @@ export function useReservations() {
     ACTION WRAPPER (SAFE + CONSISTENT)
   ========================================================= */
   const runAction = useCallback(
-    async (fn: () => Promise<Booking | null>) => {
+    async (fn: () => Promise<BookingWithMeta | null>) => {
       if (!userId) {
         setError("User not authenticated");
         return;
