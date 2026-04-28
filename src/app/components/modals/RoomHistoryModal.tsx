@@ -92,7 +92,7 @@ export default function RoomHistoryModal({
 
             // ✅ ROOM TYPE LABEL (NEW)
             room_type_name:
-              t.rooms?.room_types?.name || "Unknown Type",
+              t.rooms?.[0]?.room_types?.[0]?.name || "Unknown Type"
           })) || [];
 
         setCleaningHistory(enrichedTasks);
