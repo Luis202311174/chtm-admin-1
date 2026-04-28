@@ -455,4 +455,45 @@ export const RoomService = {
 
     return data ?? [];
   },
+
+  async addTemplateItem(templateId: number, payload: any) {
+    const { data, error } = await supabase
+      .from("housekeeping_template_items")
+      .insert({
+        template_id: templateId,
+        item_name: payload.item_name,
+        default_quantity: payload.default_quantity ?? 1,
+      })
+      .select()
+      .single();
+
+    if (error)
+      throw new Error(`[addTemplateItem] ${error.message}`);
+
+    return data;
+  },
+
+  async updateTemplateItem(itemId: number, payload: any) {
+    const { data, error } = await supabase
+      .from("housekeeping_template_items")
+      .update(payload)
+      .eq("id", itemId)
+      .select()
+      .single();
+
+    if (error)
+      throw new Error(`[updateTemplateItem] ${error.message}`);
+
+    return data;
+  },
+
+  async deleteTemplateItem(itemId: number) {
+    const { error } = await supabase
+      .from("housekeeping_template_items")
+      .delete()
+      .eq("id", itemId);
+
+    if (error)
+      throw new Error(`[deleteTemplateItem] ${error.message}`);
+  },
 };
