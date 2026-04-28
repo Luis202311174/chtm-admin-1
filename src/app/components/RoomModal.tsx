@@ -130,7 +130,7 @@ export default function RoomModal({
         >
             <option value="available">Available</option>
             <option value="occupied">Occupied</option>
-            <option value="dirty">Dirty</option>
+            <option value="needs_cleaning">Needs cleaning</option>
             <option value="cleaning">Cleaning</option>
             <option value="inspected">Inspected</option>
             <option value="maintenance">Maintenance</option>

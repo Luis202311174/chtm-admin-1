@@ -328,7 +328,7 @@ export class BookingService {
 
     await supabase
       .from("rooms")
-      .update({ status: "dirty" })
+      .update({ status: "needs_cleaning" })
       .eq("id", booking.room_id);
   }
 

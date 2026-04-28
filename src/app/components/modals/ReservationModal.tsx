@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BookingService } from '@/app/services/booking.service';
-import { Booking } from '@/types/booking.types';
+import { BookingWithMeta } from '@/types/booking.types';
 
 /* =========================
   FORMATTERS
@@ -95,7 +95,7 @@ export default function ReservationModal({
   onCheckIn,
   onCheckOut,
 }: Props) {
-  const [booking, setBooking] = useState<Booking | null>(null);
+  const [booking, setBooking] = useState<BookingWithMeta | null>(null);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -145,7 +145,6 @@ export default function ReservationModal({
   /* ✅ FIX: comes from BookingService mapper */
   const amenities: string[] = booking?.amenities ?? [];
 
-  const extraBeds = booking?.extra_beds ?? 0;
   const extraBedCost = booking?.extra_bed_fee ?? 0;
 
   const totalAmount = Number(booking?.total_amount ?? 0);
@@ -218,7 +217,9 @@ export default function ReservationModal({
 
                 <Section title="Payment">
                   <p>Method: {paymentMethod}</p>
-                  <p>Extra Beds: {formatCurrency(extraBedCost)}</p>
+                  <p>
+                    Extra Beds: {booking?.extra_bed_label} — {formatCurrency(extraBedCost)}
+                  </p>
                   <p className="font-semibold text-lg">
                     Total: {formatCurrency(totalAmount)}
                   </p>
