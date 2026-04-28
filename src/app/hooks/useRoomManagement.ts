@@ -3,6 +3,49 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { RoomService } from "@/app/services/room.service";
 
+/* =========================================================
+  TYPES
+========================================================= */
+
+export interface TaskItem {
+  id: number;
+  item_name: string;
+  quantity?: number;
+  is_done: boolean;
+  note?: string | null;
+}
+
+export interface Task {
+    id: number;
+    room_id?: number;
+    status?: string;
+    note?: string | null;
+    started_at?: string;
+    completed_at?: string;
+    completed_user?: any;
+    housekeeping_task_items?: TaskItem[];
+
+    rooms?: {
+      id: number;
+      room_number: string;
+      room_type?: {
+        id: number;
+        name: string;
+      } | null;
+    };
+  }
+
+export interface Room {
+  id: number;
+  room_number?: string;
+  status?: string;
+  room_type_id?: number;
+  room_type?: {
+    id: number;
+    name: string;
+  } | null;
+}
+
 type AnyObj = Record<string, any>;
 
 /* =========================================================
@@ -32,10 +75,14 @@ const formatDateTime = (value?: string | null) => {
   });
 };
 
+/* =========================================================
+  HOOK
+========================================================= */
+
 export function useRoomManagement() {
-  const [rooms, setRooms] = useState<AnyObj[]>([]);
-  const [tasks, setTasks] = useState<AnyObj[]>([]);
-  const [selectedTask, setSelectedTask] = useState<AnyObj | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const [roomTypes, setRoomTypes] = useState<AnyObj[]>([]);
   const [amenities, setAmenities] = useState<AnyObj[]>([]);
@@ -54,11 +101,11 @@ export function useRoomManagement() {
   }, []);
 
   /* =========================================================
-    🔥 NORMALIZER (ENHANCED - PRESERVES CLEANING DATES)
+    NORMALIZER
   ========================================================= */
-  const normalizeRooms = (roomsData: AnyObj[], typesData: AnyObj[]) => {
+  const normalizeRooms = (roomsData: any[], typesData: AnyObj[]): Room[] => {
     return (roomsData ?? []).map((room) => {
-      if (room.room_type) return room;
+      if (room.room_type) return room as Room;
 
       const foundType = typesData.find(
         (t) => t.id === room.room_type_id
@@ -67,7 +114,7 @@ export function useRoomManagement() {
       return {
         ...room,
         room_type: foundType ?? null,
-      };
+      } as Room;
     });
   };
 
@@ -97,7 +144,7 @@ export function useRoomManagement() {
       setRooms(normalizedRooms);
       setRoomTypes(typesData ?? []);
       setAmenities(amenitiesData ?? []);
-      setTasks(tasksData ?? []);
+      setTasks((tasksData ?? []) as Task[]);
     } catch (err: any) {
       if (!isMounted.current) return;
       setError(err?.message || "Failed to load data");
@@ -122,7 +169,7 @@ export function useRoomManagement() {
       const tasksData = await RoomService.getHousekeepingTasks();
 
       if (!isMounted.current) return;
-      setTasks(tasksData ?? []);
+      setTasks((tasksData ?? []) as Task[]);
     } catch (err: any) {
       if (!isMounted.current) return;
       setError(err?.message || "Failed to refresh tasks");
@@ -166,7 +213,7 @@ export function useRoomManagement() {
         );
 
         setRooms((prev) => [
-          { ...newRoom, room_type: type ?? null },
+          { ...newRoom, room_type: type ?? null } as Room,
           ...prev,
         ]);
       }),
@@ -187,7 +234,7 @@ export function useRoomManagement() {
         setRooms((prev) =>
           prev.map((room) =>
             room.id === id
-              ? { ...room, ...updated, room_type: type ?? null }
+              ? { ...room, ...updated, room_type: type ?? null } as Room
               : room
           )
         );
@@ -208,7 +255,7 @@ export function useRoomManagement() {
   );
 
   /* =========================================================
-    🧹 HOUSEKEEPING
+    HOUSEKEEPING
   ========================================================= */
 
   const startCleaning = useCallback(
@@ -227,7 +274,7 @@ export function useRoomManagement() {
                   status: "in_progress",
                   started_at:
                     updatedTask.started_at ?? new Date().toISOString(),
-                }
+                } as Task
               : task
           )
         );
@@ -246,7 +293,7 @@ export function useRoomManagement() {
       const task = await RoomService.getTaskById(taskId);
 
       if (!isMounted.current) return;
-      setSelectedTask(task);
+      setSelectedTask(task as Task);
     } catch (err: any) {
       if (!isMounted.current) return;
       setError(err?.message || "Failed to load task");
@@ -266,7 +313,7 @@ export function useRoomManagement() {
           return {
             ...prev,
             housekeeping_task_items:
-              prev.housekeeping_task_items?.map((item: AnyObj) =>
+              prev.housekeeping_task_items?.map((item) =>
                 item.id === itemId
                   ? {
                       ...item,
@@ -282,7 +329,7 @@ export function useRoomManagement() {
   );
 
   /* =========================================================
-    COMPLETE CLEANING (WITH TIME FIX)
+    COMPLETE CLEANING
   ========================================================= */
 
   const completeCleaning = useCallback(
@@ -323,7 +370,7 @@ export function useRoomManagement() {
     updateChecklistItem,
     completeCleaning,
 
-    /* optional export if you want UI formatting reuse */
     formatDateTime,
   };
 }
+

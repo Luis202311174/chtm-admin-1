@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Topbar from "@/app/components/Topbar";
 import { useSidebar } from "@/app/context/SidebarContext";
-import { useRoomManagement } from "@/app/hooks/useRoomManagement";
+import { useRoomManagement, type Room } from "@/app/hooks/useRoomManagement";
 
 import HousekeepingModal from "@/app/components/modals/CheckListModal";
 import TemplateModal from "@/app/components/modals/TemplateModal";
@@ -41,8 +41,8 @@ export default function RoomsInventory() {
   const [openTemplateModal, setOpenTemplateModal] = useState(false);
   const [openRoomModal, setOpenRoomModal] = useState(false);
 
-  const [selectedRoom, setSelectedRoom] = useState<any>(null);
-  const [historyRoom, setHistoryRoom] = useState<any>(null);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [historyRoom, setHistoryRoom] = useState<Room | null>(null);
 
   const {
     rooms,
@@ -138,9 +138,7 @@ export default function RoomsInventory() {
                       const lastClean = lastCleaningMap[room.id];
 
                       const roomTypeName =
-                        room.room_types?.name ||
-                        room.room_type?.name ||
-                        "No Room Type";
+                        room.room_type?.name || "No Room Type";
 
                       return (
                         <div
@@ -160,8 +158,8 @@ export default function RoomsInventory() {
                               </div>
 
                               <span
-                                className={`text-xs px-3 py-1 rounded-full font-medium ${
-                                  statusColors[room.status] ??
+                              className={`text-xs px-3 py-1 rounded-full font-medium ${
+                                  statusColors[room.status ?? ""] ??
                                   "bg-gray-100 text-gray-600"
                                 }`}
                               >
@@ -245,7 +243,7 @@ export default function RoomsInventory() {
                     {tasks.map((task) => {
                       const done =
                         task.housekeeping_task_items?.filter(
-                          (i: any) => i.is_done
+                          (i) => i.is_done
                         ).length || 0;
 
                       const total =
@@ -255,8 +253,7 @@ export default function RoomsInventory() {
                         total === 0 ? 0 : (done / total) * 100;
 
                       const roomTypeName =
-                        task.rooms?.room_types?.name ||
-                        `Room ${task.rooms?.room_number ?? "—"}`;
+                        task.rooms?.room_type?.name || `Room ${task.rooms?.room_number ?? "—"}`;
 
                       return (
                         <div
@@ -271,8 +268,7 @@ export default function RoomsInventory() {
 
                             <span
                               className={`text-xs px-2 py-1 rounded-full ${
-                                taskColors[task.status] ??
-                                "bg-gray-100 text-gray-600"
+                                taskColors[task.status ?? ""] ?? "bg-gray-100 text-gray-600"
                               }`}
                             >
                               {task.status}
