@@ -72,7 +72,6 @@ export async function sendBookingApprovalEmail({
       booking?.room?.room_number || "N/A";
 
     const checkIn = formatDateTime(booking?.start_at);
-    const checkOut = formatDateTime(booking?.end_at);
 
     const guests = booking?.guests ?? "N/A";
     const total = money(booking?.total_amount);
