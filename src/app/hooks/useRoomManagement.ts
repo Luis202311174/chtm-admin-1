@@ -236,9 +236,7 @@ export function useRoomManagement() {
 
         if (!isMounted.current) return;
 
-        setRooms((prev) =>
-          normalizeRooms(updatedRooms, roomTypes)
-        );
+        setRooms(normalizeRooms(updatedRooms, roomTypes));
       }),
     [runAction, roomTypes]
   );

@@ -217,7 +217,7 @@ export class BookingService {
       ALWAYS REFRESH BEFORE ARCHIVING
     ========================================================= */
     if (status === "checked_out") {
-      await this.generateHousekeepingFromTemplate(data, actorId);
+      await this.generateHousekeepingFromTemplate(data);
 
       const { data: freshBooking, error: freshError } = await supabase
         .from("bookings")
@@ -276,8 +276,7 @@ export class BookingService {
     HOUSEKEEPING ENGINE
   ========================================================= */
   private static async generateHousekeepingFromTemplate(
-    booking: any,
-    actorId?: string
+    booking: any
   ) {
     if (!booking?.room_id) return;
 
