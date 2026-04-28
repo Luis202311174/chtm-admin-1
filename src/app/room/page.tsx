@@ -128,11 +128,11 @@ export default function RoomsInventory() {
                 <h2 className="font-semibold mb-3">Rooms</h2>
 
                 {rooms.length === 0 ? (
-                  <div className="bg-white p-6 rounded-xl shadow text-center text-gray-500">
+                  <div className="bg-white p-8 rounded-2xl shadow text-center text-gray-500 text-lg">
                     No rooms available
                   </div>
                 ) : (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  <div className="grid lg:grid-cols-2 xl:grid-cols-2 gap-8">
 
                     {rooms.map((room) => {
                       const lastClean = lastCleaningMap[room.id];
@@ -143,7 +143,7 @@ export default function RoomsInventory() {
                       return (
                         <div
                           key={room.id}
-                          className="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden"
+                          className="bg-white rounded-2xl border shadow-sm hover:shadow-lg transition overflow-hidden"
                         >
                           <div className="p-4 space-y-2">
 
@@ -158,7 +158,7 @@ export default function RoomsInventory() {
                               </div>
 
                               <span
-                              className={`text-xs px-3 py-1 rounded-full font-medium ${
+                              className={`text-sm px-4 py-1.5 tracking-wide rounded-full font-medium ${
                                   statusColors[room.status ?? ""] ??
                                   "bg-gray-100 text-gray-600"
                                 }`}

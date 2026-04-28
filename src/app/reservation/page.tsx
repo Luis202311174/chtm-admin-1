@@ -165,8 +165,7 @@ export default function ReservationPage() {
       <Topbar />
 
       <main
-        className={`pt-16 transition-all duration-300 ${
-          collapsed ? "ml-20" : "ml-64"
+        className={`pt-16 transition-all duration-300 ${collapsed ? "ml-20" : "ml-64"
         }`}
       >
         <div className="space-y-6 p-4 sm:p-6">

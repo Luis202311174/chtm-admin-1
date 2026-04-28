@@ -92,55 +92,133 @@ export default function ArchivedModal({
         </button>
 
         {/* HEADER */}
-        <div className="mb-5">
-          <h2 className="text-2xl font-bold">{guestName}</h2>
-          <p className="text-sm text-gray-500">Archived Booking Details</p>
+        <div className="mb-6 border-b pb-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-800">{guestName}</h2>
+              <p className="text-sm text-gray-500 mt-1">
+                Archived Booking Details
+              </p>
+            </div>
+
+            <span className="px-4 py-1.5 bg-gray-200 text-gray-700 text-sm font-semibold rounded-full tracking-wide">
+              Archived
+            </span>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5 text-sm">
+        <div className="grid md:grid-cols-2 gap-6">
 
           {/* LEFT */}
-          <div className="space-y-2">
+          <div className="space-y-4">
 
-            <p><b>Room / Type:</b> {roomLabel}</p>
+            <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+              <p className="text-sm text-indigo-600 font-medium mb-1">Room / Type</p>
+              <p className="text-xl font-bold text-indigo-900">{roomLabel}</p>
+            </div>
 
-            <p><b>Start At:</b> {formatDate(booking.start_at)}</p>
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Check-in</span>
+                <span className="font-semibold">{formatDate(booking.checked_in_at)}</span>
+              </div>
 
-            <p><b>End At:</b> {formatDate(booking.end_at)}</p>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Check-out</span>
+                <span className="font-semibold">{formatDate(booking.checked_out_at)}</span>
+              </div>
+            </div>
 
-            <p><b>Check-in:</b> {formatDate(booking.checked_in_at)}</p>
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex justify-between items-center">
+              <div>
+                <p className="text-sm text-gray-500">Total</p>
+                <p className="text-2xl font-bold text-green-600">{money(totalAmount)}</p>
+              </div>
 
-            <p><b>Check-out:</b> {formatDate(booking.checked_out_at)}</p>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Payment</p>
+                <p className="font-semibold">{booking.payment_method ?? '—'}</p>
+              </div>
+            </div>
 
-            <p><b>Total:</b> {money(totalAmount)}</p>
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Guests</p>
+                <p className="text-lg font-semibold">{guests}</p>
+              </div>
 
-            <p><b>Payment Method:</b> {booking.payment_method ?? '—'}</p>
-
-            <p><b>Guests:</b> {guests}</p>
-
-            <p><b>Extra Beds:</b> {extraBeds}</p>
+              <div>
+                <p className="text-sm text-gray-500">Extra Beds</p>
+                <p className="text-lg font-semibold">{extraBeds}</p>
+              </div>
+            </div>
 
           </div>
 
           {/* RIGHT */}
-          <div className="space-y-2">
+          <div className="space-y-4">
 
-            <p><b>Status:</b> Archived</p>
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider border-b pb-2">
+                Staff Activity
+              </h3>
 
-            <p><b>Approved By:</b> {approvedBy}</p>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Approved By</span>
+                <span className="font-semibold">{approvedBy}</span>
+              </div>
 
-            <p><b>Checked In By:</b> {checkedInBy}</p>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Checked In By</span>
+                <span className="font-semibold">{checkedInBy}</span>
+              </div>
 
-            <p><b>Checked Out By:</b> {checkedOutBy}</p>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Checked Out By</span>
+                <span className="font-semibold">{checkedOutBy}</span>
+              </div>
+            </div>
 
-            <p><b>Child:</b> {booking.has_child ? 'Yes' : 'No'}</p>
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 grid grid-cols-3 gap-2 text-center">
 
-            <p><b>PWD:</b> {booking.has_pwd ? 'Yes' : 'No'}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Child</p>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  booking.has_child ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'
+                }`}>
+                  {booking.has_child ? 'YES' : 'NO'}
+                </span>
+              </div>
 
-            <p><b>Senior:</b> {booking.has_senior ? 'Yes' : 'No'}</p>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">PWD</p>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  booking.has_pwd ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'
+                }`}>
+                  {booking.has_pwd ? 'YES' : 'NO'}
+                </span>
+              </div>
+
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Senior</p>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  booking.has_senior ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'
+                }`}>
+                  {booking.has_senior ? 'YES' : 'NO'}
+                </span>
+              </div>
+
+            </div>
 
             {booking.message && (
-              <p><b>Message:</b> {booking.message}</p>
+              <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
+                <p className="text-sm text-yellow-700 font-medium mb-1">
+                  Guest Message
+                </p>
+                <p className="italic text-yellow-900">
+                  "{booking.message}"
+                </p>
+              </div>
             )}
 
           </div>

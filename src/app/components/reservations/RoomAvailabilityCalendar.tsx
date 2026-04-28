@@ -189,7 +189,7 @@ export default function RoomAvailabilityCalendar({
     <div className="mt-6 rounded-xl border bg-white p-5 shadow-sm">
 
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg font-semibold text-gray-800">
           Room Type Availability Calendar
         </h2>
@@ -202,7 +202,7 @@ export default function RoomAvailabilityCalendar({
       {/* =====================================================
         MONTH SELECTOR (NEW FEATURE)
       ===================================================== */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-3 mb-5 items-center">
         <select
           value={selectedMonth.month}
           onChange={(e) =>
@@ -211,7 +211,7 @@ export default function RoomAvailabilityCalendar({
               month: Number(e.target.value),
             }))
           }
-          className="border p-2 rounded"
+          className="border border-gray-300 p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
         >
           {Array.from({ length: 12 }).map((_, i) => (
             <option key={i} value={i}>
@@ -229,26 +229,36 @@ export default function RoomAvailabilityCalendar({
               year: Number(e.target.value),
             }))
           }
-          className="border p-2 rounded w-24"
+          className="border border-gray-300 p-2 rounded-lg w-28 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         />
       </div>
 
-      {/* ROOM TYPE SELECT */}
-      <select
-        value={selectedRoom ?? ''}
-        onChange={(e) =>
-          setSelectedRoom(e.target.value ? Number(e.target.value) : null)
-        }
-        className="mb-5 w-full sm:w-72 rounded-lg border border-gray-300 p-2 text-sm"
-      >
-        <option value="">Select Room Type</option>
+      {/* ROOM TYPE BUTTONS */}
+        <div className="mb-5 flex flex-wrap gap-3">
+          {roomTypes.map((type) => {
+            const isSelected = selectedRoom === type.id;
 
-        {roomTypes.map((type) => (
-          <option key={type.id} value={type.id}>
-            {type.name}
-          </option>
-        ))}
-      </select>
+            return (
+              <button
+                key={type.id}
+                onClick={() =>
+                  setSelectedRoom(isSelected ? null : type.id)
+                }
+                className={`
+                  px-4 py-2 rounded-xl text-sm font-semibold transition
+                  border shadow-sm
+                  ${
+                    isSelected
+                      ? "bg-indigo-600 text-white border-indigo-600"
+                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                  }
+                `}
+              >
+                {type.name}
+              </button>
+            );
+          })}
+        </div>
 
       {/* CALENDAR */}
       {!selectedRoom ? (
@@ -256,7 +266,7 @@ export default function RoomAvailabilityCalendar({
           Select a room type to view availability
         </div>
       ) : (
-        <div className="grid grid-cols-7 gap-2 text-sm">
+        <div className="grid grid-cols-7 gap-2 text-sm select-none">
           {Array.from({ length: monthDays }).map((_, i) => {
             const day = i + 1;
             const booked = isBooked(day);
@@ -264,10 +274,10 @@ export default function RoomAvailabilityCalendar({
             return (
               <div
                 key={day}
-                className={`p-2 text-center rounded-lg border transition ${
+                className={`p-3 text-center rounded-xl border transition duration-200 hover:scale-[1.03] ${
                   booked
-                    ? "bg-red-500 text-white border-red-500"
-                    : "bg-green-50 text-gray-700 border-green-200"
+                    ? "bg-red-500/90 text-white border-red-500 shadow-sm"
+                    : "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
                 }`}
               >
                 <span className="text-xs font-semibold">{day}</span>

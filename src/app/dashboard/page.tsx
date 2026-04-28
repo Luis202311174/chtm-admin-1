@@ -206,19 +206,36 @@ export default function Dashboard() {
           </div>
 
           {/* STATS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-            <StatCard title="Total Rooms" value={loadingData ? '...' : totalRooms.toString()} icon="🏠" color="blue" />
-            <StatCard title="Occupied" value={loadingData ? '...' : occupiedRooms.length.toString()} icon="👤" color="pink" />
-            <StatCard title="Available" value={loadingData ? '...' : (totalRooms - occupiedRooms.length).toString()} icon="✓" color="green" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <StatCard
+              title="Total Rooms"
+              value={loadingData ? '...' : totalRooms.toString()}
+              icon="🏠"
+              color="blue"
+            />
+
+            <StatCard
+              title="Occupied"
+              value={loadingData ? '...' : occupiedRooms.length.toString()}
+              icon="👤"
+              color="pink"
+            />
+
+            <StatCard
+              title="Available"
+              value={loadingData ? '...' : (totalRooms - occupiedRooms.length).toString()}
+              icon="✓"
+              color="green"
+            />
           </div>
 
           {/* TABLES */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
             {/* OCCUPIED */}
-            <div className="bg-white rounded-xl shadow-md">
-              <div className="bg-pink-600 px-6 py-4 rounded-t-xl text-white font-semibold">
-                🏨 Currently Occupied
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <div className="bg-pink-600 px-6 py-4 text-white font-semibold">
+                Currently Occupied
               </div>
 
               <div className="p-6 overflow-x-auto">
@@ -232,10 +249,10 @@ export default function Dashboard() {
 
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="p-2 text-left">Room Type</th>
-                        <th className="p-2 text-left">Guest</th>
-                        <th className="p-2 text-left">Check-in</th>
-                        <th className="p-2 text-left">Check-out</th>
+                        <th className="px-4 py-3 text-left">Room Type</th>
+                        <th className="px-4 py-3 text-left">Guest</th>
+                        <th className="px-4 py-3 text-left">Check-in</th>
+                        <th className="px-4 py-3 text-left">Check-out</th>
                       </tr>
                     </thead>
 
@@ -248,15 +265,15 @@ export default function Dashboard() {
                             {getRoomType(b)}
                           </td>
 
-                          <td className="p-2">
+                          <td className="px-4 py-3">
                             {getFullName(b.users)}
                           </td>
 
-                          <td className="p-2">
+                          <td className="px-4 py-3">
                             {new Date(b.start_at).toLocaleDateString()}
                           </td>
 
-                          <td className="p-2">
+                          <td className="px-4 py-3">
                             {new Date(b.end_at).toLocaleDateString()}
                           </td>
 
@@ -266,7 +283,7 @@ export default function Dashboard() {
 
                   </table>
                 ) : (
-                  <p className="text-gray-500 text-center py-6">
+                  <p className="text-gray-400 text-center py-12 italic">
                     No occupied rooms
                   </p>
                 )}
@@ -276,7 +293,7 @@ export default function Dashboard() {
 
             {/* UPCOMING */}
             <div className="bg-white rounded-xl shadow-md">
-              <div className="bg-teal-600 px-6 py-4 rounded-t-xl text-white font-semibold">
+              <div className="bg-teal-600 px-6 py-4 text-white font-semibold">
                 📅 Upcoming Reservations
               </div>
 
@@ -291,10 +308,10 @@ export default function Dashboard() {
 
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="p-2 text-left">Guest</th>
-                        <th className="p-2 text-left">Room Type</th>
-                        <th className="p-2 text-left">Check-in</th>
-                        <th className="p-2 text-left">Check-out</th>
+                        <th className="px-4 py-3 text-left">Guest</th>
+                        <th className="px-4 py-3 text-left">Room Type</th>
+                        <th className="px-4 py-3 text-left">Check-in</th>
+                        <th className="px-4 py-3 text-left">Check-out</th>
                       </tr>
                     </thead>
 
@@ -302,7 +319,7 @@ export default function Dashboard() {
                       {upcomingBookings.map((b) => (
                         <tr key={b.id} className="border-b">
 
-                          <td className="p-2">
+                          <td className="px-4 py-3">
                             {getFullName(b.users)}
                           </td>
 
@@ -311,11 +328,11 @@ export default function Dashboard() {
                             {getRoomType(b)}
                           </td>
 
-                          <td className="p-2">
+                          <td className="px-4 py-3">
                             {new Date(b.start_at).toLocaleDateString()}
                           </td>
 
-                          <td className="p-2">
+                          <td className="px-4 py-3">
                             {new Date(b.end_at).toLocaleDateString()}
                           </td>
 
@@ -325,7 +342,7 @@ export default function Dashboard() {
 
                   </table>
                 ) : (
-                  <p className="text-gray-500 text-center py-6">
+                  <p className="text-gray-400 text-center py-12 italic">
                     No upcoming reservations
                   </p>
                 )}
