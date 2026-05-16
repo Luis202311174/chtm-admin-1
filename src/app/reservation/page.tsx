@@ -19,7 +19,18 @@ import { Booking } from "@/types/booking.types";
 
 type TabType = Booking["status"];
 
+import RequireRole from '@/app/components/RequireRole';
+
 export default function ReservationPage() {
+  return (
+    <RequireRole allowedRoles={['reservation']}>
+      <ReservationPageInner />
+    </RequireRole>
+  );
+}
+
+function ReservationPageInner() {
+  console.log('ReservationPageInner: Component mounted.');
   /* =========================================================
     STATE
   ========================================================= */

@@ -8,7 +8,18 @@ import Topbar from '@/app/components/Topbar';
 import StatCard from '@/app/components/StatCard';
 import { useSidebar } from '@/app/context/SidebarContext';
 
+import RequireRole from '@/app/components/RequireRole';
+
 export default function Dashboard() {
+  return (
+    <RequireRole allowedRoles={['admin', 'frontoffice']}>
+      <DashboardInner />
+    </RequireRole>
+  );
+}
+
+
+function DashboardInner() {
   const router = useRouter();
   const { collapsed } = useSidebar();
 
@@ -63,7 +74,7 @@ export default function Dashboard() {
           return;
         }
 
-        if (!['admin', 'super_admin'].includes(profile.role)) {
+        if (!['admin', 'frontoffice', 'super_admin'].includes(profile.role)) {
           await supabase.auth.signOut();
           router.push('/');
           return;

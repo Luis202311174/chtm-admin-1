@@ -69,6 +69,7 @@ export function useReservations() {
   }, []);
 
   useEffect(() => {
+    console.log('useReservations: Initial fetchReservations triggered.');
     fetchReservations();
   }, [fetchReservations]);
 

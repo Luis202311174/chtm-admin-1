@@ -3,10 +3,13 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSidebar } from '@/app/context/SidebarContext';
+import { supabase } from '@/lib/supabase';
 
 interface SidebarProps {
   activeMenu?: string;
 }
+
+const isAdmin = (role: string | null | undefined) => role === 'admin' || role === 'super_admin';
 
 export default function Sidebar({ activeMenu = 'dashboard' }: SidebarProps) {
   const { collapsed, toggleSidebar } = useSidebar();
@@ -24,13 +27,56 @@ export default function Sidebar({ activeMenu = 'dashboard' }: SidebarProps) {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  const [role, setRole] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+
+    const loadRole = async () => {
+      setAuthLoading(true);
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          if (!alive) return;
+          setRole(null);
+          return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (!alive) return;
+        setRole(profileError ? null : profile?.role ?? null);
+      } finally {
+        if (!alive) return;
+        setAuthLoading(false);
+      }
+    };
+
+    loadRole();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '⊞' },
-    { id: 'reservation', label: 'Reservation', icon: '📅' },
-    { id: 'archived', label: 'Archived', icon: '🗄️' },
-    { id: 'room', label: 'Room', icon: '🏠' },
-    { id: 'settings', label: 'System Settings', icon: '⚙' },
+    { id: 'dashboard', label: 'Dashboard', icon: '⊞', allowedRoles: ['admin', 'frontoffice', 'reservation', 'housekeeper'] },
+    { id: 'reservation', label: 'Reservation', icon: '📅', allowedRoles: ['reservation'] },
+    { id: 'archived', label: 'Archived', icon: '🗄️', allowedRoles: ['frontoffice', 'admin'] },
+    { id: 'room', label: 'Room', icon: '🏠', allowedRoles: ['frontoffice', 'housekeeper', 'admin'] },
+    { id: 'settings', label: 'System Settings', icon: '⚙', allowedRoles: ['admin'] },
   ];
+
+  const visibleMenuItems = menuItems.filter((item) => {
+    if (isAdmin(role)) return true;
+    if (authLoading) return false;
+    return item.allowedRoles.includes(role ?? 'user');
+  });
+
 
   const getHref = (id: string) => {
     if (id === 'dashboard') return '/dashboard';
@@ -91,7 +137,7 @@ export default function Sidebar({ activeMenu = 'dashboard' }: SidebarProps) {
               </div>
 
               <div className="p-3 space-y-1">
-                {menuItems.map((item) => (
+                {visibleMenuItems.map((item) => (
                   <SidebarItem key={item.id} item={item} />
                 ))}
               </div>
@@ -134,7 +180,7 @@ export default function Sidebar({ activeMenu = 'dashboard' }: SidebarProps) {
 
       {/* MENU */}
       <nav className="p-3 space-y-1">
-        {menuItems.map((item) => (
+        {visibleMenuItems.map((item) => (
           <SidebarItem key={item.id} item={item} />
         ))}
       </nav>

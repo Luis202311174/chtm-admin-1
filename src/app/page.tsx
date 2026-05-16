@@ -23,7 +23,6 @@ export default function AdminLoginPage() {
       return;
     }
 
-    // 1️⃣ Authenticate with Supabase
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -35,13 +34,11 @@ export default function AdminLoginPage() {
     }
 
     const user = data.user;
-
     if (!user) {
       setError("Authentication failed.");
       return;
     }
 
-    // 2️⃣ Fetch role from public.users
     const { data: profile, error: profileError } = await supabase
       .from("users")
       .select("role")
@@ -54,20 +51,34 @@ export default function AdminLoginPage() {
       return;
     }
 
-    // 3️⃣ Check role
-    if (profile.role !== "admin" && profile.role !== "super_admin") {
-      await supabase.auth.signOut();
-      setError("You are not authorized to access the admin dashboard.");
+    const role = profile.role;
+
+    if (role === "admin" || role === "super_admin") {
+      router.push("/dashboard");
       return;
     }
 
-    // ✅ Admin → proceed
-    router.push("/dashboard");
+    if (role === "frontoffice") {
+      router.push("/dashboard");
+      return;
+    }
+
+    if (role === "reservation") {
+      router.push("/reservation");
+      return;
+    }
+
+    if (role === "housekeeper") {
+      router.push("/room");
+      return;
+    }
+
+    await supabase.auth.signOut();
+    setError("You are not authorized to access this system.");
   };
 
   return (
     <div className={`flex min-h-screen ${inter.className}`}>
-      {/* Left Side - Branding (UNCHANGED) */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-600 via-slate-500 to-slate-400 relative">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -110,21 +121,11 @@ export default function AdminLoginPage() {
             "Enhancing service excellence through the College of Hospitality and Tourism Management"
           </p>
 
-          <div
-            className="w-48 h-1 bg-pink-600 mt-4 self-start"
-            style={{ marginLeft: "calc((100% - 430px) / 2)" }}
-          ></div>
-
-          <p
-            className="mt-6 text-white text-sm font-semibold self-start"
-            style={{ marginLeft: "calc((100% - 430px) / 2)" }}
-          >
-            CHTM Department
-          </p>
+          <div className="w-48 h-1 bg-pink-600 mt-4 self-start" />
+          <p className="mt-6 text-white text-sm font-semibold self-start">CHTM Department</p>
         </div>
       </div>
 
-      {/* Right Side - ADMIN LOGIN ONLY */}
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-2xl px-8">
           <div className="mb-12">

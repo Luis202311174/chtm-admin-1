@@ -148,6 +148,7 @@ export function useRoomAvailability() {
   }, [fetchRooms]);
 
   useEffect(() => {
+    console.log('useRoomAvailability: Initial loadData triggered.');
     loadData();
   }, [loadData]);
 
